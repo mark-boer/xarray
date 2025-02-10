@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 import warnings
-from collections.abc import Callable, Hashable, Iterable, Iterator, Mapping
+from collections.abc import Callable, Hashable, Iterable, Iterator, Mapping, Set
 from contextlib import suppress
 from html import escape
 from textwrap import dedent
@@ -1347,9 +1347,10 @@ class DataWithCoords(AttrAccessMixin):
 
         Parameters
         ----------
-        test_elements : array_like
+        test_elements : array_like or set
             The values against which to test each value of `element`.
             This argument is flattened if an array or array_like.
+            The set is used as is, instead of being converted to a numpy scalar.
             See numpy notes for behavior with non-array-like parameters.
 
         Returns
@@ -1382,6 +1383,8 @@ class DataWithCoords(AttrAccessMixin):
             # need to explicitly pull out data to support dask arrays as the
             # second argument
             test_elements = test_elements.data
+        elif isinstance(test_elements, Set):
+            test_elements = list(test_elements)
 
         return apply_ufunc(
             duck_array_ops.isin,

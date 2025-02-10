@@ -6615,13 +6615,21 @@ def test_isin(da) -> None:
     result = da.isin([3]).sel(y=list("de"), z=0)
     assert_equal(result, expected)
 
+    result_with_set = da.isin({3}).sel(y=list("de"), z=0)
+    assert_equal(result_with_set, expected)
+
     expected = DataArray(
         np.asarray([[0, 0, 1], [1, 0, 0]]),
         dims=list("yx"),
         coords={"x": list("abc"), "y": list("de")},
     ).astype("bool")
+
     result = da.isin([2, 3]).sel(y=list("de"), z=0)
     assert_equal(result, expected)
+
+    result_with_set = da.isin({2, 3}).sel(y=list("de"), z=0)
+    assert_equal(result_with_set, expected)
+
 
 
 def test_raise_no_warning_for_nan_in_binary_ops() -> None:
